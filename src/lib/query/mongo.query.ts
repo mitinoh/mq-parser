@@ -141,20 +141,23 @@ function getFilter(query: any, def: QueryObjectModel): QueryObjectModel {
       return obj;
     } else if (isORFilter(queryValue)) {
       let v: any[] = []
-            if (queryValue.includes('=')) {
-                let flt = queryValue.split(',')
-                flt.forEach((fl: any) => {
-                    if (fl.includes('=')) {
-                        v.push(getArrayValue(fl.split('=')[0], [fl.split('=')[1]])[0])
-                    } else {
-                        v.push(getArrayValue(key, [fl])[0])
-                    }
-                });
-            }
-            if (v.length) {
-                obj.$or = [...(obj.$or || []), ...v];
-            }
-            return obj;
+      if (queryValue.includes('=')) {
+        let flt = queryValue.split(',')
+        flt.forEach((fl: any) => {
+          if (fl.includes('=')) {
+            v.push(getArrayValue(fl.split('=')[0], [fl.split('=')[1]])[0])
+          } else {
+            v.push(getArrayValue(key, [fl])[0])
+          }
+        });
+      }
+      else {
+        v = getArrayValue(key, queryValue.split(','));
+      }
+      if (v.length) {
+        obj.$or = [...(obj.$or || []), ...v];
+      }
+      return obj;
     }
 
     const value = getSimpleFilterValue(queryValue);
